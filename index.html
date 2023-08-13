@@ -1,1 +1,233 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home of Bags and TVs</title>
+    <!--css-->
+  <link rel="stylesheet" href="styles.css">
 
+    
+</head>
+<body>
+    <!-- Navigation Bar -->
+    
+
+
+<nav>
+    <div class="logo"><h2>Home of Bags and TVs</h2></div>
+    <h3 style="text-align: center;">FortPortal,</h3>
+    <h4 style="text-align: center;">Kabundaire</h4>
+    <!-- SEARCH BAR -->
+    <div class="search-container">
+        <input type="text" placeholder="Search for a product">
+        <button>Search</button>
+    </div>
+    <ul class="nav-links">
+        <li><a href="#bags">Bags</a></li>
+        <li><a href="#tvs">TVs</a></li>
+        <li><a href="#contact">Contact Us</a></li>
+    </ul>
+    <div class="menu-icon">&#9776;</div>
+</nav>
+
+
+    <!-- Main Content -->
+    <main>
+        <!-- Bags Section -->
+        <h2>Bags</h2>
+        <section id="bags">
+            
+            <div class="product">
+                <img src="/wizcom Dev/home of bags/bag-images/hand bag 1.jpg  " alt="Bag 2">
+                <h4>Hand Bag</h4><p>Price: Shs65000</p>
+                <button>Add to Cart</button>
+            </div>
+
+            <div class="product">
+                <img src="/wizcom Dev/home of bags/bag-images/laptop bag 1.jpg" alt="Bag 2">
+                <h4>Laptop Bag</h4><p>Price: Shs65000</p>
+                <button>Add to Cart</button>
+            </div>
+            
+            <div class="product">
+                <img src="/wizcom Dev/home of bags/bag-images/school bag 1.jpg" alt="Bag 2">
+                <h4>School Bag</h4><p>Price: Shs65000</p>
+                <button>Add to Cart</button>
+            </div>
+
+            <div class="product">
+                <img src="/wizcom Dev/home of bags/bag-images/travel bag 1.jpg" alt="Bag 2">
+                <h4>Travel Bag</h4> <p>Price: Shs65000</p>
+                <button>Add to Cart</button>
+            </div>
+
+            <!-- Add more bag products here if needed -->
+        </section>
+
+        <!-- TVs Section -->
+        <h2>TVs</h2>
+        <section id="tvs">
+            
+            <div class="product">
+                <img src="/wizcom Dev/home of bags/tv-images/android tv 1.jpg" alt="TV 1">
+                
+                <h4>Android  Smart Tv</h4><p>Price: Shs1200000</p>
+                <button>Add to Cart</button>
+            </div>
+
+            <div class="product">
+                <img src="/wizcom Dev/home of bags/tv-images/sony tv 1.jpg" alt="TV 2">
+                <h4>Sony HD 24 inc Tv</h4> <p>Price: Shs600000</p>
+                <button>Add to Cart</button>
+            </div>
+
+            <div class="product">
+                <img src="/wizcom Dev/home of bags/tv-images/hisense 1.jpg" alt="TV 1">
+                
+                <h4>Hisense 39 inc  Tv</h4><p>Price: Shs900000</p>
+                <button>Add to Cart</button>
+            </div>
+
+            <div class="product">
+                <img src="/wizcom Dev/home of bags/tv-images/lg 1.jpg" alt="TV 2">
+                <h4>LG  12.4 inc Tv</h4><p>Price: Shs1200000</p>
+                <button>Add to Cart</button>
+            </div>
+
+            <!-- Add more TV products here if needed -->
+        </section>
+
+      <!-- Cart Contents -->
+<section id="cart">
+    <h2>Your Cart</h2>
+    <ul id="cartList"></ul>
+    <p id="totalPrice">Total Price: Shs0</p>
+    <button id="Order">Order Now</button>
+</section>
+
+
+
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+       
+        <p>Location: Kabundaire, Fort Portal City</p>
+        <p>Phone: <a style="color: white; font-weight: bolder;" href="tel:+256740128879">Call Us Now</a></p>
+        <p> <a style="color: white; font-weight: bolder;" href="https://wa.me/+256779491167">Whatsapp</a></p>
+        <p>&copy; 2023 Home of Bags and TVs</p>
+    </footer>
+
+    <!-- JavaScript -->
+   
+      
+
+<script>
+  
+
+
+    document.addEventListener('DOMContentLoaded', function () {
+    const menuIcon = document.querySelector('.menu-icon');
+    const navLinks = document.querySelector('.nav-links');
+    const searchButton = document.querySelector('.search-container button');
+    const products = document.querySelectorAll('.product');
+    const addToCartButtons = document.querySelectorAll('.product button');
+    const cartList = document.getElementById('cartList');
+    const totalPrice = document.getElementById('totalPrice');
+    let cart = [];
+    let cartTotal = 0;
+
+    menuIcon.addEventListener('click', function () {
+        navLinks.classList.toggle('active');
+        menuIcon.classList.toggle('active');
+    });
+
+    // Function to filter and display products based on search term
+    function filterProducts(searchTerm) {
+        products.forEach(product => {
+            const productName = product.querySelector('h4').textContent.toLowerCase();
+
+            if (productName.includes(searchTerm)) {
+                product.style.display = 'block';
+            } else {
+                product.style.display = 'none';
+            }
+        });
+    }
+
+    searchButton.addEventListener('click', function () {
+        const searchTerm = document.querySelector('.search-container input[type="text"]').value.toLowerCase();
+        filterProducts(searchTerm);
+    });
+
+    // Function to add a product to the cart
+    function addToCart(productName, productPrice) {
+        cart.push({ name: productName, price: productPrice });
+        cartTotal += productPrice;
+
+        updateCartDisplay();
+        updateCartCookie();
+    }
+
+    // Function to remove a product from the cart
+    function removeItemFromCart(productName, productPrice) {
+        const index = cart.findIndex(item => item.name === productName);
+        if (index !== -1) {
+            cart.splice(index, 1);
+            cartTotal -= productPrice;
+
+            updateCartDisplay();
+            updateCartCookie();
+        }
+    }
+
+    // Function to update the cart list and total display
+    function updateCartDisplay() {
+        cartList.innerHTML = '';
+        cart.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = `${item.name} - Shs${item.price}`;
+            const removeButton = document.createElement('button');
+            removeButton.textContent = 'Remove';
+            removeButton.addEventListener('click', () => {
+                removeItemFromCart(item.name, item.price);
+            });
+            li.appendChild(removeButton);
+            cartList.appendChild(li);
+        });
+
+        totalPrice.textContent = `Total Price: Shs${cartTotal}`;
+    }
+
+    addToCartButtons.forEach(button => {
+        button.addEventListener('click', function (event) {
+            const productDiv = event.target.closest('.product');
+            const productName = productDiv.querySelector('h4').textContent;
+            const productPrice = parseFloat(productDiv.querySelector('p').textContent.split('Price: Shs')[1].trim());
+
+            addToCart(productName, productPrice);
+        });
+    });
+
+    // Function to update the cart cookie
+    function updateCartCookie() {
+        const cartData = JSON.stringify(cart);
+        document.cookie = `cart=${cartData}; path=/`;
+    }
+
+    // Order button functionality
+    const orderButton = document.getElementById('Order');
+    orderButton.addEventListener('click', () => {
+        updateCartCookie();
+        window.location.href = 'order.html';
+    });
+});
+
+
+      
+
+</script>
+
+</body>
+</html>
