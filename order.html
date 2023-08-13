@@ -1,1 +1,190 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+   <nav>
+    <div class="logo"><h2>Home of Bags and TVs</h2></div>
+    <h3 style="text-align: center;">FortPortal,</h3>
+    <h4 style="text-align: center;">Kabundaire</h4>
+    <a style="color: orange; font-size: 25px; " href="index.html">Home</a>
+
+   
+</nav>
+    <main>
+   
+      <!-- Cart Contents -->
+
+
+     
+
+    <section id="orderCart">
+        <h2>Your Cart</h2>
+        <ul id="orderCartList"></ul>
+        <p id="orderTotalPrice">Total Price: Shs0</p>
+    </section>
+
+    <!-- Order Form -->
+    <div class="order-form">
+        <h2>Order Form</h2>
+        <form id="userForm">
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" maxlength="15">
+
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" maxlength="10" required>
+
+            <label for="phoneNumber">Phone Number:</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" maxlength="14" required>
+
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" name="email" maxlength="35">
+
+            <label for="location">Location:</label>
+            <input type="text" id="location" maxlength="15" name="location" required>
+
+            <button type="submit">Submit Order</button>
+        </form>
+    </div></main>
+    
+
+    <!-- footer -->
+
+    <footer>
+       
+        <p>Location: Kabundaire, Fort Portal City</p>
+        <p>Phone: <a style="color: white; font-weight: bolder;" href="tel:+256740128879">Call Us Now</a></p>
+        <p> <a style="color: white; font-weight: bolder;" href="https://wa.me/+256779491167">Whatsapp</a></p>
+        <p>&copy; 2023 Home of Bags and TVs</p>
+        <p><H4>Designed By:</H3> <a style="color: white; font-weight: bolder;" href="https://wa.me/+256779491167">Wizcom Developers  FortPortal</a></p>
+    </footer>
+
+    <script>
+    
+   
+
+
+        // Function to retrieve a cookie by name
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        // Function to calculate the total price of items in the cart
+        function calculateCartTotal(cart) {
+            return cart.reduce((total, item) => total + item.price, 0);
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const orderCartList = document.getElementById('orderCartList');
+            const orderTotalPrice = document.getElementById('orderTotalPrice');
+            const userForm = document.getElementById('userForm');
+
+            // Retrieve cart data from cookies for the order page
+            const orderCart = JSON.parse(getCookie('cart')) || [];
+            let orderCartTotal = calculateCartTotal(orderCart);
+
+            // Populate and display cart items on the order page
+            orderCartList.innerHTML = '';
+            orderCart.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.textContent = `${item.name} - Shs${item.price}`;
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.addEventListener('click', () => {
+                    removeItemFromCart(index, item.price);
+                });
+                li.appendChild(removeButton);
+                orderCartList.appendChild(li);
+            });
+
+            orderTotalPrice.textContent = `Total Price: Shs${orderCartTotal}`;
+
+            // Function to remove a product from the cart
+            function removeItemFromCart(index, productPrice) {
+                orderCart.splice(index, 1);
+                orderCartTotal -= productPrice;
+
+                updateCartDisplay();
+                updateCartCookie();
+            }
+
+            // Function to update the cart display
+            function updateCartDisplay() {
+                orderCartList.innerHTML = '';
+                orderCart.forEach((item, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = `${item.name} - Shs${item.price}`;
+                    const removeButton = document.createElement('button');
+                    removeButton.textContent = 'Remove';
+                    removeButton.addEventListener('click', () => {
+                        removeItemFromCart(index, item.price);
+                    });
+                    li.appendChild(removeButton);
+                    orderCartList.appendChild(li);
+                });
+
+                orderTotalPrice.textContent = `Total Price: Shs${orderCartTotal}`;
+            }
+
+            // Form validation and submission
+            userForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                
+                const firstName = sanitizeInput(document.getElementById('firstName').value);
+                const lastName = sanitizeInput(document.getElementById('lastName').value);
+                const phoneNumber = sanitizeInput(document.getElementById('phoneNumber').value);
+                const email = sanitizeInput(document.getElementById('email').value);
+                const location = sanitizeInput(document.getElementById('location').value);
+
+                // Validate email format
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(email)) {
+                    alert('Please enter a valid email address.');
+                    return;
+                }
+
+                // Check if the cart is empty
+                if (orderCart.length === 0) {
+                    alert('Your cart is empty. Add items before submitting your order.');
+                    return;
+                }
+
+                // Construct the order details
+                let orderDetails = `Order Details:\n`;
+                orderDetails += `Name: ${firstName} ${lastName}\n`;
+                orderDetails += `Phone Number: ${phoneNumber}\n`;
+                orderDetails += `Email: ${email}\n`;
+                orderDetails += `Location: ${location}\n\n`;
+                orderDetails += `Cart Items:\n`;
+
+                orderCart.forEach(item => {
+                    orderDetails += `${item.name} - Shs${item.price}\n`;
+                });
+
+                // Create the mailto link
+                const emailLink = `mailto:wizzcom12@gmail.com?subject=Order%20Details&body=${encodeURIComponent(orderDetails)}`;
+
+                // Open the user's default email client
+                window.location.href = emailLink;
+            });
+
+            // Sanitize user input (prevent XSS attacks)
+            function sanitizeInput(input) {
+                const sanitizedInput = input.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                return sanitizedInput;
+            }
+
+            // Other functions...
+            // ...
+        });
+    </script>
+</body>
+</html>
+
 
